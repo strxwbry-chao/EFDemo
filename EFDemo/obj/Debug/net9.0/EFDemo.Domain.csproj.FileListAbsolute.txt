@@ -1,0 +1,11 @@
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\bin\Debug\net9.0\EFDemo.Domain.deps.json
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\bin\Debug\net9.0\EFDemo.Domain.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\bin\Debug\net9.0\EFDemo.Domain.pdb
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.AssemblyInfoInputs.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.AssemblyInfo.cs
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.csproj.CoreCompileInputs.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\refint\EFDemo.Domain.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.pdb
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\ref\EFDemo.Domain.dll

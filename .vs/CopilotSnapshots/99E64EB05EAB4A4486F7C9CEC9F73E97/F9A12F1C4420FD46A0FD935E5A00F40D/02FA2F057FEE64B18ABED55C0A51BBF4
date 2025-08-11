@@ -1,0 +1,206 @@
+﻿using Microsoft.EntityFrameworkCore;
+using EFDemo.Infrastructure.Data;
+using EFDemo.Domain.Repositories;
+using EFDemo.Infrastructure.Repositories;
+using EFDemo.Infrastructure.Services;
+
+/// <summary>
+/// Application entry point and configuration.
+/// 
+/// LEARNING NOTE: In .NET 9, we use the minimal hosting model where Program.cs
+/// contains both the service registration (dependency injection setup) and
+/// the middleware pipeline configuration.
+/// 
+/// This file demonstrates several important concepts:
+/// 1. Dependency Injection container setup
+/// 2. Entity Framework configuration
+/// 3. HTTP pipeline configuration
+/// 4. Environment-specific settings
+/// </summary>
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// LEARNING NOTE: This is where we register services for dependency injection.
+// The order of registration usually doesn't matter, but it's good practice
+// to group related services together.
+
+/// <summary>
+/// Configure Entity Framework with SQLite database.
+/// 
+/// LEARNING NOTE: We're using SQLite for simplicity in this demo, but in production
+/// you would typically use SQL Server, PostgreSQL, or another full-featured database.
+/// 
+/// The connection string configuration demonstrates how to:
+/// 1. Use different databases for different environments
+/// 2. Store sensitive data in configuration files
+/// 3. Configure Entity Framework providers
+/// </summary>
+builder.Services.AddDbContext<CustomerContext>(options =>
+{
+    // LEARNING NOTE: We'll use an in-memory SQLite database for this demo
+    // In a real application, you would get the connection string from configuration:
+    // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    // options.UseSqlite(connectionString);
+    
+    options.UseSqlite("Data Source=customers.db");
+    
+    // Enable sensitive data logging in development for debugging
+    // LEARNING NOTE: This should NEVER be enabled in production as it logs
+    // parameter values, which could include sensitive data
+    if (builder.Environment.IsDevelopment())
+    {
+        options.EnableSensitiveDataLogging();
+        options.EnableDetailedErrors();
+    }
+});
+
+/// <summary>
+/// Register Repository pattern services.
+/// 
+/// LEARNING NOTE: We register both the generic repository and the specific
+/// customer repository. The lifetime is Scoped, which means one instance
+/// per HTTP request. This is appropriate for repositories because:
+/// 1. They hold database connections (via DbContext)
+/// 2. We want to share the same context across a request
+/// 3. We don't want to keep connections open across requests
+/// </summary>
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+/// <summary>
+/// Register Service layer.
+/// 
+/// LEARNING NOTE: Services are also registered as Scoped because they depend
+/// on repositories which are scoped. The service layer contains business logic
+/// and coordinates between controllers and repositories.
+/// </summary>
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+/// <summary>
+/// Register MVC controllers.
+/// 
+/// LEARNING NOTE: AddControllers() registers the minimal services needed for
+/// API controllers. If you needed views (MVC), you would use AddControllersWithViews().
+/// If you needed Razor Pages, you would use AddRazorPages().
+/// </summary>
+builder.Services.AddControllers();
+
+/// <summary>
+/// Configure OpenAPI/Swagger for API documentation.
+/// 
+/// LEARNING NOTE: OpenAPI (formerly Swagger) automatically generates API documentation
+/// from your controller actions. This is invaluable for:
+/// 1. Testing APIs during development
+/// 2. Providing documentation to API consumers
+/// 3. Generating client code for API consumption
+/// </summary>
+builder.Services.AddOpenApi();
+
+// Build the application
+var app = builder.Build();
+
+/// <summary>
+/// Configure the HTTP request pipeline.
+/// 
+/// LEARNING NOTE: The middleware pipeline processes HTTP requests in order.
+/// Each middleware can:
+/// 1. Process the request before passing to the next middleware
+/// 2. Process the response after receiving it from the next middleware
+/// 3. Short-circuit the pipeline by not calling the next middleware
+/// 
+/// The order of middleware registration is VERY important!
+/// </summary>
+
+// Configure the HTTP request pipeline for development.
+if (app.Environment.IsDevelopment())
+{
+    /// <summary>
+    /// Enable OpenAPI UI in development.
+    /// 
+    /// LEARNING NOTE: We only enable Swagger UI in development because:
+    /// 1. It can expose API details you don't want public
+    /// 2. It adds overhead in production
+    /// 3. Production APIs should use proper API documentation sites
+    /// </summary>
+    app.MapOpenApi();
+    
+    /// <summary>
+    /// Enable developer exception page.
+    /// 
+    /// LEARNING NOTE: This provides detailed error information during development
+    /// but should never be enabled in production as it can leak sensitive information.
+    /// </summary>
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    /// <summary>
+    /// Enable global exception handling in production.
+    /// 
+    /// LEARNING NOTE: In production, you want to handle exceptions gracefully
+    /// without exposing internal details to users. You would typically log
+    /// the full exception details and return a generic error message.
+    /// </summary>
+    app.UseExceptionHandler("/Error");
+}
+
+/// <summary>
+/// Ensure database is created and seeded.
+/// 
+/// LEARNING NOTE: This creates the database and applies any pending migrations.
+/// In production, you would typically handle database migrations differently:
+/// 1. Use Entity Framework migration scripts
+/// 2. Apply migrations during deployment
+/// 3. Use database migration tools
+/// 
+/// ERROR EXPLANATION: If the database doesn't exist, Entity Framework will
+/// throw exceptions when trying to access data.
+/// 
+/// FIX EXPLANATION: We ensure the database is created at startup and seed it
+/// with initial data. This is simple for demos but not recommended for production.
+/// </summary>
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<CustomerContext>();
+    
+    // Ensure database is created
+    context.Database.EnsureCreated();
+    
+    // Seed initial data
+    await DatabaseSeeder.SeedAsync(context);
+}
+
+/// <summary>
+/// Force HTTPS redirection.
+/// 
+/// LEARNING NOTE: This middleware redirects HTTP requests to HTTPS.
+/// Essential for production applications to ensure data security.
+/// </summary>
+app.UseHttpsRedirection();
+
+/// <summary>
+/// Enable authorization middleware.
+/// 
+/// LEARNING NOTE: Even if you're not using authentication/authorization now,
+/// it's good practice to include this middleware so you can add security later
+/// without changing the pipeline order.
+/// </summary>
+app.UseAuthorization();
+
+/// <summary>
+/// Map controller routes.
+/// 
+/// LEARNING NOTE: This maps HTTP requests to controller actions based on
+/// routing conventions and attributes. Since we're using [Route] attributes
+/// on our controllers, this will use attribute-based routing.
+/// </summary>
+app.MapControllers();
+
+/// <summary>
+/// Start the application.
+/// 
+/// LEARNING NOTE: This starts the HTTP server and begins listening for requests.
+/// The application will run until stopped (Ctrl+C) or the process is terminated.
+/// </summary>
+app.Run();

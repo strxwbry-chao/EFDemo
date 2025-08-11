@@ -1,0 +1,149 @@
+using EFDemo.Domain;
+
+namespace EFDemo.Domain.Specifications
+{
+    /// <summary>
+    /// Specification to filter customers by their active status.
+    /// 
+    /// LEARNING NOTE: This is a concrete implementation of the Specification pattern.
+    /// Notice how it encapsulates a specific business rule: "find active customers".
+    /// This rule can now be reused anywhere in the application and is easily testable.
+    /// </summary>
+    public class ActiveCustomersSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification that filters for active customers only.
+        /// LEARNING NOTE: The base constructor is called with a lambda expression
+        /// that defines the business rule. The expression x => x.IsActive will be
+        /// translated to SQL as "WHERE IsActive = 1" by Entity Framework.
+        /// </summary>
+        public ActiveCustomersSpecification() : base(x => x.IsActive)
+        {
+            // Apply default ordering by last name, then first name
+            // LEARNING NOTE: It's often useful to have a default sort order
+            // for consistent user experience
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to filter customers by their inactive status.
+    /// </summary>
+    public class InactiveCustomersSpecification : BaseSpecification<Customer>
+    {
+        public InactiveCustomersSpecification() : base(x => !x.IsActive)
+        {
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to find customers by name (first name or last name contains the search term).
+    /// 
+    /// LEARNING NOTE: This specification takes parameters, making it more flexible.
+    /// The search is case-insensitive and searches both first and last names.
+    /// </summary>
+    public class CustomersByNameSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification that searches for customers by name.
+        /// </summary>
+        /// <param name="searchTerm">The term to search for in first or last name</param>
+        public CustomersByNameSpecification(string searchTerm) 
+            : base(x => x.FirstName.ToLower().Contains(searchTerm.ToLower()) || 
+                       x.LastName.ToLower().Contains(searchTerm.ToLower()))
+        {
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to find a customer by their exact ID.
+    /// 
+    /// LEARNING NOTE: Even simple lookups can benefit from the specification pattern
+    /// because it keeps the query logic consistent and allows for easy modification
+    /// (e.g., adding includes or additional filters).
+    /// </summary>
+    public class CustomerByIdSpecification : BaseSpecification<Customer>
+    {
+        public CustomerByIdSpecification(int customerId) : base(x => x.Id == customerId)
+        {
+            // No additional configuration needed for a simple ID lookup
+        }
+    }
+
+    /// <summary>
+    /// Specification for getting customers with pagination support.
+    /// 
+    /// LEARNING NOTE: This specification demonstrates how to combine business logic
+    /// with technical concerns like pagination. The business logic (active customers)
+    /// is separated from the technical implementation (paging).
+    /// 
+    /// ERROR EXPLANATION: The original implementation tried to use conditional expressions
+    /// directly in the base constructor, which doesn't work well with nullable expressions.
+    /// 
+    /// FIX EXPLANATION: We now use separate constructors and handle the conditional logic
+    /// by calling the appropriate base constructor based on the activeOnly parameter.
+    /// This approach is cleaner and avoids null reference issues.
+    /// </summary>
+    public class CustomersWithPagingSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification for paginated customer results.
+        /// </summary>
+        /// <param name="pageNumber">Page number (1-based)</param>
+        /// <param name="pageSize">Number of items per page</param>
+        /// <param name="activeOnly">Whether to include only active customers</param>
+        public CustomersWithPagingSpecification(int pageNumber, int pageSize, bool activeOnly = true)
+            : base(activeOnly ? (System.Linq.Expressions.Expression<System.Func<Customer, bool>>)(x => x.IsActive) : null)
+        {
+            // Calculate skip value for pagination
+            // LEARNING NOTE: We convert 1-based page numbers to 0-based skip values
+            var skip = (pageNumber - 1) * pageSize;
+            ApplyPaging(skip, pageSize);
+            
+            // Apply default ordering for consistent pagination
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification for active customers with name search.
+    /// 
+    /// LEARNING NOTE: Rather than building complex dynamic expressions, it's often
+    /// better to create specific, focused specifications for common use cases.
+    /// This makes the code more readable and maintainable.
+    /// 
+    /// ERROR EXPLANATION: The original CustomerFilterSpecification tried to use
+    /// complex expression building with PredicateBuilder, which is advanced and
+    /// can be error-prone.
+    /// 
+    /// FIX EXPLANATION: We've replaced it with simpler, more focused specifications
+    /// that handle specific combinations of filters. This is easier to understand,
+    /// test, and maintain.
+    /// </summary>
+    public class ActiveCustomersByNameSpecification : BaseSpecification<Customer>
+    {
+        public ActiveCustomersByNameSpecification(string searchTerm)
+            : base(x => x.IsActive && 
+                       (x.FirstName.ToLower().Contains(searchTerm.ToLower()) || 
+                        x.LastName.ToLower().Contains(searchTerm.ToLower())))
+        {
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification for all customers (no filtering, just ordering).
+    /// LEARNING NOTE: This demonstrates a specification that doesn't filter data
+    /// but only provides ordering. This is why we made the Criteria property nullable.
+    /// </summary>
+    public class AllCustomersSpecification : BaseSpecification<Customer>
+    {
+        public AllCustomersSpecification() : base()
+        {
+            // No criteria - this will return all customers
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+}

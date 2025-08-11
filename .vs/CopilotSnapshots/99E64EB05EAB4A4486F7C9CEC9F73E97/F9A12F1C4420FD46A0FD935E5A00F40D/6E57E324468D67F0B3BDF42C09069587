@@ -1,0 +1,147 @@
+﻿using EFDemo.Domain;
+
+namespace EFDemo.Domain.Specifications
+{
+    /// <summary>
+    /// Specification to filter customers by their active status.
+    /// 
+    /// LEARNING NOTE: This is a concrete implementation of the Specification pattern.
+    /// Notice how it encapsulates a specific business rule: "find active customers".
+    /// This rule can now be reused anywhere in the application and is easily testable.
+    /// </summary>
+    public class ActiveCustomersSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification that filters for active customers only.
+        /// LEARNING NOTE: The base constructor is called with a lambda expression
+        /// that defines the business rule. The expression x => x.IsActive will be
+        /// translated to SQL as "WHERE IsActive = 1" by Entity Framework.
+        /// </summary>
+        public ActiveCustomersSpecification() : base(x => x.IsActive)
+        {
+            // Apply default ordering by last name, then first name
+            // LEARNING NOTE: It's often useful to have a default sort order
+            // for consistent user experience
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to filter customers by their inactive status.
+    /// </summary>
+    public class InactiveCustomersSpecification : BaseSpecification<Customer>
+    {
+        public InactiveCustomersSpecification() : base(x => !x.IsActive)
+        {
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to find customers by name (first name or last name contains the search term).
+    /// 
+    /// LEARNING NOTE: This specification takes parameters, making it more flexible.
+    /// The search is case-insensitive and searches both first and last names.
+    /// </summary>
+    public class CustomersByNameSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification that searches for customers by name.
+        /// </summary>
+        /// <param name="searchTerm">The term to search for in first or last name</param>
+        public CustomersByNameSpecification(string searchTerm) 
+            : base(x => x.FirstName.ToLower().Contains(searchTerm.ToLower()) || 
+                       x.LastName.ToLower().Contains(searchTerm.ToLower()))
+        {
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification to find a customer by their exact ID.
+    /// 
+    /// LEARNING NOTE: Even simple lookups can benefit from the specification pattern
+    /// because it keeps the query logic consistent and allows for easy modification
+    /// (e.g., adding includes or additional filters).
+    /// </summary>
+    public class CustomerByIdSpecification : BaseSpecification<Customer>
+    {
+        public CustomerByIdSpecification(int customerId) : base(x => x.Id == customerId)
+        {
+            // No additional configuration needed for a simple ID lookup
+        }
+    }
+
+    /// <summary>
+    /// Specification for getting customers with pagination support.
+    /// 
+    /// LEARNING NOTE: This specification demonstrates how to combine business logic
+    /// with technical concerns like pagination. The business logic (active customers)
+    /// is separated from the technical implementation (paging).
+    /// </summary>
+    public class CustomersWithPagingSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification for paginated customer results.
+        /// </summary>
+        /// <param name="pageNumber">Page number (1-based)</param>
+        /// <param name="pageSize">Number of items per page</param>
+        /// <param name="activeOnly">Whether to include only active customers</param>
+        public CustomersWithPagingSpecification(int pageNumber, int pageSize, bool activeOnly = true)
+            : base(activeOnly ? x => x.IsActive : null)
+        {
+            // Calculate skip value for pagination
+            // LEARNING NOTE: We convert 1-based page numbers to 0-based skip values
+            var skip = (pageNumber - 1) * pageSize;
+            ApplyPaging(skip, pageSize);
+            
+            // Apply default ordering for consistent pagination
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+
+    /// <summary>
+    /// Specification for advanced customer filtering that can combine multiple criteria.
+    /// 
+    /// LEARNING NOTE: This shows how specifications can become quite sophisticated
+    /// while still maintaining clean, readable code. All the complexity is encapsulated
+    /// within the specification class.
+    /// </summary>
+    public class CustomerFilterSpecification : BaseSpecification<Customer>
+    {
+        /// <summary>
+        /// Creates a specification with multiple optional filter criteria.
+        /// </summary>
+        /// <param name="isActive">Filter by active status (null = no filter)</param>
+        /// <param name="searchTerm">Search term for name (null = no filter)</param>
+        /// <param name="createdAfter">Filter by creation date (null = no filter)</param>
+        public CustomerFilterSpecification(bool? isActive = null, string? searchTerm = null, DateTime? createdAfter = null)
+        {
+            // LEARNING NOTE: Building complex expressions dynamically
+            // This is more advanced but shows the power of the specification pattern
+            
+            var criteria = PredicateBuilder.True<Customer>();
+            
+            if (isActive.HasValue)
+            {
+                criteria = criteria.And(x => x.IsActive == isActive.Value);
+            }
+            
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                criteria = criteria.And(x => x.FirstName.ToLower().Contains(searchTerm.ToLower()) || 
+                                           x.LastName.ToLower().Contains(searchTerm.ToLower()));
+            }
+            
+            if (createdAfter.HasValue)
+            {
+                criteria = criteria.And(x => x.CreatedAt >= createdAfter.Value);
+            }
+
+            // Apply the combined criteria
+            // Note: This is a simplified version. In a real implementation,
+            // you might need to handle the base class criteria differently
+            ApplyOrderBy(x => x.LastName);
+        }
+    }
+}

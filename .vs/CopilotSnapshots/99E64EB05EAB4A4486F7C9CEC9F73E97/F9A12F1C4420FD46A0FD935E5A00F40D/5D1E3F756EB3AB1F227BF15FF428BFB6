@@ -1,0 +1,105 @@
+﻿using System.Linq.Expressions;
+
+namespace EFDemo.Domain.Specifications
+{
+    /// <summary>
+    /// Base implementation of the Specification pattern that provides common functionality.
+    /// 
+    /// LEARNING NOTE: This abstract base class implements the ISpecification interface
+    /// and provides a foundation for concrete specifications. It handles the boilerplate
+    /// code so that concrete specifications only need to define their business rules.
+    /// 
+    /// Abstract classes are useful when:
+    /// 1. You want to share code among several closely related classes
+    /// 2. You want to provide a default implementation that can be overridden
+    /// 3. You need to define a template method pattern
+    /// </summary>
+    /// <typeparam name="T">The entity type this specification applies to</typeparam>
+    public abstract class BaseSpecification<T> : ISpecification<T>
+    {
+        /// <summary>
+        /// Constructor that accepts the criteria expression.
+        /// LEARNING NOTE: The 'protected' modifier means only classes that inherit
+        /// from this base class can call this constructor.
+        /// </summary>
+        /// <param name="criteria">The business rule expression</param>
+        protected BaseSpecification(Expression<Func<T, bool>> criteria)
+        {
+            Criteria = criteria;
+        }
+
+        /// <summary>
+        /// Default constructor for specifications that don't need criteria.
+        /// LEARNING NOTE: This allows for specifications that only define
+        /// includes, ordering, or paging without filtering.
+        /// </summary>
+        protected BaseSpecification()
+        {
+            // No criteria - this will select all records
+        }
+
+        public Expression<Func<T, bool>>? Criteria { get; }
+        public List<Expression<Func<T, object>>> Includes { get; } = new();
+        public List<string> IncludeStrings { get; } = new();
+        public Expression<Func<T, object>>? OrderBy { get; private set; }
+        public Expression<Func<T, object>>? OrderByDescending { get; private set; }
+        public int Skip { get; private set; }
+        public int Take { get; private set; }
+        public bool IsPagingEnabled { get; private set; }
+
+        /// <summary>
+        /// Adds an include expression for eager loading.
+        /// LEARNING NOTE: The 'protected' modifier means only derived classes
+        /// can call this method. This is part of the Template Method pattern.
+        /// </summary>
+        /// <param name="includeExpression">Expression defining what to include</param>
+        protected virtual void AddInclude(Expression<Func<T, object>> includeExpression)
+        {
+            Includes.Add(includeExpression);
+        }
+
+        /// <summary>
+        /// Adds a string-based include for eager loading.
+        /// </summary>
+        /// <param name="includeString">String path for the include</param>
+        protected virtual void AddInclude(string includeString)
+        {
+            IncludeStrings.Add(includeString);
+        }
+
+        /// <summary>
+        /// Sets the ordering expression for ascending sort.
+        /// LEARNING NOTE: We use a fluent interface pattern here, which makes
+        /// the code more readable: specification.ApplyOrderBy(x => x.Name)
+        /// </summary>
+        /// <param name="orderByExpression">Expression to order by</param>
+        protected virtual void ApplyOrderBy(Expression<Func<T, object>> orderByExpression)
+        {
+            OrderBy = orderByExpression;
+        }
+
+        /// <summary>
+        /// Sets the ordering expression for descending sort.
+        /// </summary>
+        /// <param name="orderByDescendingExpression">Expression to order by descending</param>
+        protected virtual void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescendingExpression)
+        {
+            OrderByDescending = orderByDescendingExpression;
+        }
+
+        /// <summary>
+        /// Enables paging with skip and take values.
+        /// LEARNING NOTE: Paging is essential for performance when dealing with large datasets.
+        /// Skip/Take translates to OFFSET/LIMIT in SQL, which is much more efficient
+        /// than loading all records and paging in memory.
+        /// </summary>
+        /// <param name="skip">Number of records to skip</param>
+        /// <param name="take">Number of records to take</param>
+        protected virtual void ApplyPaging(int skip, int take)
+        {
+            Skip = skip;
+            Take = take;
+            IsPagingEnabled = true;
+        }
+    }
+}

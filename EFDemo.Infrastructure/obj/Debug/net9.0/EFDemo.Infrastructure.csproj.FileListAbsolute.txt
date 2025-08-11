@@ -1,0 +1,17 @@
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.csproj.AssemblyReference.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.AssemblyInfoInputs.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.AssemblyInfo.cs
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.csproj.CoreCompileInputs.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Infrastructure.deps.json
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Infrastructure.runtimeconfig.json
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Infrastructure.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Infrastructure.pdb
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Domain.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\bin\Debug\net9.0\EFDemo.Domain.pdb
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.I.A789AED9.Up2Date
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\refint\EFDemo.Infrastructure.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.pdb
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.genruntimeconfig.cache
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\ref\EFDemo.Infrastructure.dll
