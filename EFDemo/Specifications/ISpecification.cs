@@ -3,47 +3,16 @@ using System.Linq.Expressions;
 namespace EFDemo.Domain.Specifications
 {
     /// <summary>
-    /// The Specification pattern interface defines a contract for business rules
-    /// that can be combined and reused across different parts of the application.
-    /// 
-    /// LEARNING NOTE: The Specification pattern is useful because:
-    /// 1. It encapsulates business logic in reusable components
-    /// 2. Specifications can be combined using AND, OR, NOT operations
-    /// 3. It keeps complex query logic out of repositories
-    /// 4. Business rules become testable in isolation
-    /// 5. It follows the Single Responsibility Principle
-    /// 
-    /// ERROR EXPLANATION: The original interface had a non-nullable Criteria property,
-    /// but some specifications don't need filtering criteria (they might only specify
-    /// ordering or paging). Making it nullable allows for more flexible specifications.
+    /// Core Specification pattern interface for encapsulating business query rules.
+    /// Focuses on essential filtering and ordering capabilities.
     /// </summary>
     /// <typeparam name="T">The entity type this specification applies to</typeparam>
     public interface ISpecification<T>
     {
         /// <summary>
-        /// The criteria expression that defines the business rule.
-        /// LEARNING NOTE: This returns a Lambda expression (Expression<Func<T, bool>>)
-        /// which can be translated to SQL by Entity Framework, making it efficient.
-        /// 
-        /// FIX EXPLANATION: Changed from non-nullable to nullable (Expression<Func<T, bool>>?)
-        /// to allow specifications that don't need filtering criteria. This is essential
-        /// for specifications that only handle ordering, paging, or includes.
+        /// The criteria expression that defines the business rule (WHERE clause).
         /// </summary>
         Expression<Func<T, bool>>? Criteria { get; }
-
-        /// <summary>
-        /// List of include expressions for eager loading related entities.
-        /// LEARNING NOTE: This allows specifications to define what related data
-        /// should be loaded to avoid N+1 query problems.
-        /// </summary>
-        List<Expression<Func<T, object>>> Includes { get; }
-
-        /// <summary>
-        /// List of include strings for eager loading (alternative to expression-based includes).
-        /// LEARNING NOTE: Sometimes it's easier to specify includes as strings,
-        /// especially for complex navigation paths like "Order.Customer.Address".
-        /// </summary>
-        List<string> IncludeStrings { get; }
 
         /// <summary>
         /// OrderBy expression for sorting results.
@@ -54,21 +23,5 @@ namespace EFDemo.Domain.Specifications
         /// OrderByDescending expression for sorting results in descending order.
         /// </summary>
         Expression<Func<T, object>>? OrderByDescending { get; }
-
-        /// <summary>
-        /// Number of records to skip (for pagination).
-        /// LEARNING NOTE: Used with Take to implement efficient pagination.
-        /// </summary>
-        int Skip { get; }
-
-        /// <summary>
-        /// Number of records to take (for pagination).
-        /// </summary>
-        int Take { get; }
-
-        /// <summary>
-        /// Whether paging is enabled for this specification.
-        /// </summary>
-        bool IsPagingEnabled { get; }
     }
 }

@@ -73,3 +73,4 @@ C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Api\obj\Debug\net9.0\refint\EFDemo.Api.
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Api\obj\Debug\net9.0\EFDemo.Api.pdb
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Api\obj\Debug\net9.0\EFDemo.Api.genruntimeconfig.cache
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Api\obj\Debug\net9.0\ref\EFDemo.Api.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Api\obj\Debug\net9.0\EFDemo.Api.sourcelink.json

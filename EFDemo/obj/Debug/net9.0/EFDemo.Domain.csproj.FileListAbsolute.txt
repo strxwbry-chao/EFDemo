@@ -9,3 +9,4 @@ C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.dll
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\refint\EFDemo.Domain.dll
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.pdb
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\ref\EFDemo.Domain.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo\obj\Debug\net9.0\EFDemo.Domain.sourcelink.json

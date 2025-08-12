@@ -15,3 +15,4 @@ C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\refint\
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.pdb
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.genruntimeconfig.cache
 C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\ref\EFDemo.Infrastructure.dll
+C:\bit\InternalToolsByAshe\EFDemo\EFDemo.Infrastructure\obj\Debug\net9.0\EFDemo.Infrastructure.sourcelink.json
