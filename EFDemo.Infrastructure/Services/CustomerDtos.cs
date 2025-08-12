@@ -2,9 +2,6 @@ using EFDemo.Domain;
 
 namespace EFDemo.Infrastructure.Services
 {
-    /// <summary>
-    /// Simple DTOs for the Customer demo.
-    /// </summary>
     public class CreateCustomerDto
     {
         public string FirstName { get; set; } = string.Empty;

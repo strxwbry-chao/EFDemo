@@ -3,15 +3,12 @@ using EFDemo.Infrastructure.Data;
 
 namespace EFDemo.Infrastructure.Data
 {
-    /// <summary>
-    /// Simple database seeder for demo data.
-    /// </summary>
     public static class DatabaseSeeder
     {
         public static async Task SeedAsync(CustomerContext context)
         {
             if (context.Customers.Any())
-                return; // Already seeded
+                return;
 
             var customers = new List<Customer>
             {

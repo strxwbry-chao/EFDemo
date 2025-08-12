@@ -1,4 +1,4 @@
-﻿namespace EFDemo
+﻿namespace EFDemo.Domain
 {
     /// <summary>
     /// Customer entity - demonstrates a simple domain entity with the Repository and Specification patterns.
@@ -11,9 +11,6 @@
         public string LastName { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
 
-        /// <summary>
-        /// Domain method demonstrating business logic in entities.
-        /// </summary>
         public string GetFullName() => $"{FirstName} {LastName}".Trim();
     }
 }

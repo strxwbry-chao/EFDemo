@@ -39,10 +39,6 @@ namespace EFDemo.Domain.Specifications
             OrderBy = orderByExpression;
         }
 
-        /// <summary>
-        /// Sets the ordering expression for descending sort.
-        /// </summary>
-        /// <param name="orderByDescendingExpression">Expression to order by descending</param>
         protected virtual void ApplyOrderByDescending(Expression<Func<T, object>> orderByDescendingExpression)
         {
             OrderByDescending = orderByDescendingExpression;
