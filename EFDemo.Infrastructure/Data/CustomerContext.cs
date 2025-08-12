@@ -16,26 +16,13 @@ namespace EFDemo.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // Basic Customer entity configuration
+            
+            // Essential configuration only
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.ToTable("Customers");
-                entity.HasKey(e => e.Id);
-                
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-                
-                entity.Property(e => e.LastName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-                
-                entity.Property(e => e.IsActive)
-                    .HasDefaultValue(true);
-
-                // Index for common queries
-                entity.HasIndex(e => e.IsActive);
+                entity.Property(e => e.FirstName).IsRequired();
+                entity.Property(e => e.LastName).IsRequired();
+                entity.HasIndex(e => e.IsActive); // Important for your queries
             });
         }
     }
